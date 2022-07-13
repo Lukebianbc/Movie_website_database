@@ -1,0 +1,2 @@
+# Movie_website_database
+#### This is the final project of my database system course. We designed the database and based on it, we built a movie website where users can do some basic operations like favorite the movies they like, comment on the movies, rate the movies, etc. I was responsible for the database design and a little bit of backend development. We downloaded data from: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
