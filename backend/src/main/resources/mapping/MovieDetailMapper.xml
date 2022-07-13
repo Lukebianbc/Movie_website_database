@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cs516.movie.mapper.MovieDetailMapper">
+
+  <select id="selectTop20Popular" resultType="MovieDetail">
+    SELECT * from moviedetail ORDER BY popularity DESC LIMIT 20
+  </select>
+  
+  <select id="selectTop20Rated" resultType="MovieDetail">
+    SELECT * from moviedetail ORDER BY vote_average DESC LIMIT 20
+  </select>
+  
+  <select id="selectUserFavMovies" resultType="MovieDetail">
+    SELECT * FROM moviedetail WHERE "id" IN (SELECT movie_id from userfavmovie where user_id = #{userId})
+  </select>
+
+  <select id="selectUserFavActors" resultType="PeopleInfo">
+    SELECT * FROM people_info WHERE "id" IN (SELECT actor_id from userfavactor where user_id = #{userId})
+  </select>
+
+  <select id="selectMovieByMovieId" resultType="MovieDetail">
+    select * from moviedetail where id = #{movieId}
+  </select>
+
+  <select id="selectUserRatedMovies" resultType="MovieDetail">
+    select * FROM moviedetail a, userratings b where a."id" = b.movie_id and b.user_id = #{userId}
+  </select>
+  
+  <select id="selectUserReviewdMovies" resultType="MovieDetail">
+    select * FROM moviedetail a, userreview b where a."id" = b.movie_id and b.user_id = #{userId}
+  </select>
+
+  <select id="selectUserViewedMovies" resultType="MovieDetail">
+    select * FROM moviedetail a, userview b where a."id" = b.movie_id and b.user_id = #{userId}
+  </select>
+
+  <select id="selectUserRecommendedMovies" resultType="MovieDetail">
+    (select moviedetail.* from moviedetail, 
+      (select distinct movie_id from moviegenre where genre_id in 
+        (select distinct genre_id from moviegenre where movie_id in 
+          (SELECT movie_id FROM public.userfavmovie
+          where user_id = #{userId})
+        )
+      and movie_id not in (SELECT movie_id FROM public.userfavmovie
+          where user_id = #{userId})
+      ) as list
+    where moviedetail.id = list.movie_id order by vote_average*popularity desc limit 20)
+  </select>
+
+  <select id="selectFuzzySearchedMovies" resultType="MovieDetail">
+    select * from moviedetail ORDER BY SIMILARITY(title, #{input}) DESC limit 100
+  </select>
+
+  <select id="selectAccurateSearchedMovies" resultType="MovieDetail">
+    select * from moviedetail where title = #{input} limit 100
+  </select>
+
+  <select id="selectComplexFilteredMovies" parameterType="String" resultType="MovieDetail">
+    select * from moviedetail where id in (
+      select movie_id from moviegenre where genre_id in (select id from genre where name = #{genre})
+    ) 
+    and moviedetail.release_date between #{startTime} and #{endTime}
+    <if test="sort == 'vote_average'">
+      ORDER BY vote_average
+    </if>
+    <if test="sort == 'popularity'">
+      ORDER BY popularity
+    </if>
+    <if test="sort == 'runtime'">
+      ORDER BY runtime
+    </if>
+    <if test="sort == 'runtime'">
+      ORDER BY runtime
+    </if>   
+    <if test="seq == 'asc'">
+     asc
+    </if>
+    <if test="seq == 'desc'">
+      desc
+    </if>
+    limit 100
+
+  </select>
+  
+</mapper>

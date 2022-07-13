@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cs516.movie.mapper.UserviewMapper">
+  <insert id="saveView">
+    INSERT INTO userview (user_id, movie_id, time )
+    VALUES
+      (#{userId}, #{movieId}, #{date} ) ON CONFLICT ( user_id, movie_id ) DO
+    UPDATE 
+      SET time = #{date} 
+    WHERE
+    userview.user_id = #{userId} and userview.movie_id = #{movieId}
+  </insert>
+
+  <delete id="deleteView">
+    delete FROM userview where user_id = #{userId} and movie_id = #{movieId}
+  </delete>
+</mapper>

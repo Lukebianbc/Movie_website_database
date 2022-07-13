@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cs516.movie.mapper.UserMapper">
+
+  <resultMap id="BaseResultMap" type="User">
+    <result column="userId" jdbcType="VARCHAR" property="userId"></result>
+    <result column="name" jdbcType="VARCHAR" property="name"></result>
+    <result column="email" jdbcType="VARCHAR" property="email"></result>
+    <result column="password" jdbcType="VARCHAR" property="password"></result>
+    <result column="createdOn" jdbcType="TIMESTAMP" property="createdOn"></result>
+    <result column="lastLogin" jdbcType="TIMESTAMP" property="lastLogin"></result>
+  </resultMap>
+
+  <select id="checkUserExists" resultType="Boolean">
+    SELECT EXISTS(SELECT 1 FROM users WHERE email=#{email} and password=#{password})
+  </select>
+
+  <insert id="saveUser" parameterType="User">
+    insert into users (name, email, password, created_on) values (#{name}, #{email}, #{password}, #{created_on})
+  </insert>
+  
+  <select id="checkEmailUsed" resultType="Boolean">
+    SELECT EXISTS(SELECT 1 FROM users WHERE email=#{email})
+  </select>
+  
+  <select id="selectUserByEmail" resultType="User">
+    SELECT * from users where email = #{email}
+  </select>
+  
+  <update id="updateLastLogin">
+    UPDATE users set last_login = #{lastLogin}
+  </update>
+
+  <update id="updateName">
+    UPDATE users set name = #{name} where "user_id"::text = #{userId}
+  </update>
+  
+  <update id="updateEmail">
+    UPDATE users set email = #{email} where "user_id"::text = #{userId}
+  </update>
+  
+  <select id="selectUserByUserId" resultType="User">
+    SELECT * from users where "user_id"::text = #{userId}
+  </select>
+  
+  <update id="updatePassword">
+    UPDATE users set password = #{password} where "user_id"::text = #{userId}
+  </update>
+</mapper>

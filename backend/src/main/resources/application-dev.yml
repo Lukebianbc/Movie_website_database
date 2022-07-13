@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://vcm-25050.vm.duke.edu:5432/movie_db
+    username: dblpuser
+    password: passw0rd
+    driver-class-name: org.postgresql.Driver
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.cs516.movie.domain
+  configLocation: classpath:mybatis-config.xml
